@@ -17,9 +17,8 @@
             --ease: cubic-bezier(0.23, 1, 0.32, 1);
         }
 
-        /* Essential Fix: Ensure clicks are captured */
         * { cursor: none; }
-        
+
         body {
             margin: 0; background-color: var(--bg-deep); color: white;
             font-family: 'Inter', sans-serif; height: 100vh; overflow: hidden;
@@ -48,13 +47,41 @@
                 radial-gradient(circle at 90% 80%, rgba(56, 189, 248, 0.05), transparent 40%);
             filter: blur(80px); animation: nebula-pulse 15s infinite alternate ease-in-out;
         }
+        @keyframes nebula-pulse { 0% { opacity: 0.5; transform: scale(1); } 100% { opacity: 1; transform: scale(1.1); } }
+
         #starfield { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+        
         .data-fragment {
             position: fixed; font-family: 'JetBrains Mono'; font-size: 10px; 
             color: rgba(255,255,255,0.15); user-select: none; pointer-events: none; z-index: 0;
             animation: float-up linear infinite;
         }
         @keyframes float-up { from { transform: translateY(100vh); opacity: 0; } 50% { opacity: 0.5; } to { transform: translateY(-10vh); opacity: 0; } }
+
+        .noise {
+            position: fixed; inset: 0; z-index: 2; pointer-events: none; opacity: 0.04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
+
+        /* --- UI ELEMENTS --- */
+        nav {
+            position: fixed; top: 0; left: 0; width: 100%; padding: 40px 60px;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 100; pointer-events: auto;
+        }
+        .nav-item { 
+            font-family: 'JetBrains Mono'; font-size: 12px; text-transform: uppercase; 
+            letter-spacing: 2px; opacity: 0.8; text-shadow: 0 0 10px rgba(255,255,255,0.2);
+            cursor: pointer;
+        }
+        
+        .warp-toggle {
+            background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);
+            color: white; padding: 8px 16px; border-radius: 20px; cursor: pointer;
+            font-family: 'JetBrains Mono'; font-size: 10px; text-transform: uppercase;
+            transition: 0.3s;
+        }
+        .warp-toggle:hover { background: white; color: black; box-shadow: 0 0 20px white; }
 
         /* --- SCROLLER --- */
         .main-scroller {
@@ -72,48 +99,110 @@
         .flashcard {
             background: var(--glass); backdrop-filter: blur(16px);
             padding: 80px; width: 90%; max-width: 700px; border-radius: 12px;
-            border: 1px solid var(--glass-border); 
+            border: 1px solid transparent; 
             box-shadow: 0 30px 90px rgba(0,0,0,0.7);
             transform-style: preserve-3d; opacity: 0; transform: translateY(30px);
             transition: opacity 0.6s, transform 0.6s;
             position: relative;
-            pointer-events: auto; /* IMPORTANT */
         }
-        .section.active .flashcard { opacity: 1; transform: translateY(0); }
 
-        /* --- BUTTONS & ACTIONS --- */
-        .action-btn, .review-card, .warp-toggle, .close-btn {
-            pointer-events: auto !important;
-            z-index: 50;
+        .flashcard::after {
+            content: ""; position: absolute; inset: 0; border-radius: 12px; padding: 1px;
+            background: linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.4), transparent 60%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor; mask-composite: exclude;
+            pointer-events: none; animation: border-flow 4s linear infinite;
+            background-size: 200% 200%;
+        }
+        @keyframes border-flow { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
+        
+        .section.active .flashcard { opacity: 1; transform: translateY(0); }
+        .section.active .flashcard.glitch-in { animation: glitch-reveal 0.4s forwards; }
+
+        @keyframes glitch-reveal {
+            0% { clip-path: inset(50% 0 50% 0); transform: scale(0.9) skew(10deg); filter: invert(1); }
+            100% { clip-path: inset(0 0 0 0); }
+        }
+
+        h1 {
+            font-size: 5rem; margin: 0; font-weight: 900; letter-spacing: -3px;
+            background: linear-gradient(to bottom, #fff, #999); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            transform: translateZ(30px); cursor: pointer;
         }
         
-        .btn-group { margin-top: 40px; display: flex; flex-direction: column; gap: 12px; }
+        .typewriter {
+            font-family: 'JetBrains Mono'; font-size: 1.1rem; color: rgba(255,255,255,0.7);
+            margin-top: 20px; min-height: 1.6em; transform: translateZ(20px);
+        }
+        .cursor-blink { display: inline-block; width: 8px; height: 1.2em; background: white; animation: blink-cursor 1s infinite; vertical-align: middle; }
+        @keyframes blink-cursor { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+        /* --- BUTTONS --- */
+        .btn-group { margin-top: 40px; display: flex; flex-direction: column; gap: 12px; transform: translateZ(25px); }
         
         .action-btn {
             background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border);
             padding: 22px 30px; color: white; cursor: pointer; text-align: left;
             display: flex; justify-content: space-between; align-items: center;
-            transition: 0.3s; border-radius: 6px; text-decoration: none;
+            transition: background 0.3s, border-color 0.3s; border-radius: 6px; text-decoration: none;
         }
-        .action-btn:hover { background: rgba(255,255,255,0.1); border-color: white; }
+        .action-btn:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2); }
+        
+        .scroll-down {
+            margin-top: 50px; background: none; border: none; color: rgba(255,255,255,0.2);
+            font-size: 1.5rem; cursor: pointer; transition: 0.3s; animation: bounce 2s infinite;
+        }
+        .scroll-down:hover { color: white; text-shadow: 0 0 10px white; }
+        @keyframes bounce { 0%, 100% {transform: translateY(0);} 50% {transform: translateY(10px);} }
+
+        /* --- REPUTATION --- */
+        .review-card {
+            background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border);
+            padding: 25px; border-radius: 8px; position: relative; transition: 0.3s; cursor: pointer;
+        }
+        .review-card:hover { border-color: rgba(255,255,255,0.3); transform: scale(1.02); }
+        .review-text { font-size: 1.1rem; font-style: italic; opacity: 0.9; display: block; margin-bottom: 8px; }
+        .review-author { font-family: 'JetBrains Mono'; font-size: 0.75rem; color: #a5b4fc; text-decoration: none; opacity: 0.7; }
+        .review-author:hover { text-decoration: underline; opacity: 1; }
 
         /* --- OVERLAYS --- */
         .overlay {
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.98);
-            z-index: 99999; overflow-y: auto; backdrop-filter: blur(30px);
-            cursor: auto;
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95);
+            z-index: 2000; overflow-y: auto; backdrop-filter: blur(20px);
+            animation: fadeIn 0.4s var(--ease); cursor: auto;
         }
-        .overlay-content { max-width: 1000px; margin: 80px auto; padding: 40px; pointer-events: auto; }
-        .grid-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
-        
-        .info-card { 
-            background: rgba(255,255,255,0.03); padding: 25px; border-radius: 12px; 
-            border: 1px solid var(--glass-border); transition: 0.3s;
-            display: flex; flex-direction: column; justify-content: center; min-height: 60px;
-        }
-        .card-title { font-size: 1.1rem; font-weight: 700; color: white; }
+        .overlay * { cursor: auto; }
+        .overlay .close-btn { cursor: pointer; }
 
-        h1 { font-size: 5rem; margin: 0; font-weight: 900; background: linear-gradient(#fff, #999); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+        .overlay-content { max-width: 1200px; margin: 80px auto; padding: 40px; }
+        .overlay-header { display: flex; justify-content: space-between; border-bottom: 1px solid var(--glass-border); padding-bottom: 20px; margin-bottom: 40px; }
+        .overlay-title { font-size: 3rem; font-weight: 800; margin: 0; }
+        .close-btn { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: white; padding: 10px 24px; border-radius: 100px; cursor: pointer; transition: 0.3s; }
+        .close-btn:hover { background: white; color: black; }
+
+        .grid-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .info-card { background: rgba(255,255,255,0.03); padding: 35px; border-radius: 12px; border: 1px solid var(--glass-border); transition: 0.3s; }
+        .info-card:hover { border-color: white; transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .card-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 10px; }
+        .card-desc { font-size: 0.95rem; opacity: 0.6; line-height: 1.6; }
+
+        /* --- RANKING LISTS --- */
+        .hidden-list { margin-top: 15px; font-family: 'JetBrains Mono'; font-size: 0.9rem; line-height: 1.8; color: #fff; }
+        .click-hint { color: #a5b4fc !important; font-weight: bold; margin-top: 10px; display: block; }
+
+        .particle {
+            position: absolute; width: 4px; height: 4px; background: white; border-radius: 50%;
+            pointer-events: none; animation: pop 0.6s ease-out forwards;
+        }
+        @keyframes pop { to { transform: translate(var(--dx), var(--dy)); opacity: 0; } }
+
+        @media (max-width: 768px) {
+            .flashcard { padding: 40px; width: 85%; }
+            h1 { font-size: 3rem; }
+            #cursor, #cursor-dot { display: none; }
+            * { cursor: auto; }
+        }
     </style>
 </head>
 <body>
@@ -123,12 +212,31 @@
     <div id="nebula"></div>
     <canvas id="starfield"></canvas>
     <div id="data-rain"></div>
+    <div class="noise"></div>
+
+    <nav>
+        <div class="nav-item hover-text" data-text="mohammad">mohammad</div>
+        <div style="display:flex; gap:20px; align-items:center;">
+            <button class="warp-toggle hover-trigger" onclick="toggleWarp()">Hyperdrive</button>
+            <div class="nav-item hover-text" data-text="Bahrain / 2026">Bahrain / 2026</div>
+        </div>
+    </nav>
 
     <div class="main-scroller">
+        
         <div class="section active" id="sec1">
             <div class="flashcard">
                 <h1 class="hover-text" data-text="mohammad">mohammad</h1>
-                <p>Scroll down to explore.</p>
+                <div class="typewriter"><span id="type-target"></span><span class="cursor-blink"></span></div>
+                <button class="scroll-down hover-trigger" onclick="document.getElementById('sec2').scrollIntoView();">↓</button>
+            </div>
+        </div>
+
+        <div class="section" id="sec2">
+            <div class="flashcard">
+                <h1 class="hover-text" data-text="Profile">Profile</h1>
+                <p>14, based in Bahrain.<br>Slowly experimenting with blender and trying graphic design.</p>
+                <button class="scroll-down hover-trigger" onclick="document.getElementById('sec3').scrollIntoView();">↓</button>
             </div>
         </div>
 
@@ -136,72 +244,291 @@
             <div class="flashcard">
                 <h1 class="hover-text" data-text="Interests">Interests</h1>
                 <div class="btn-group">
-                    <button class="action-btn hover-trigger" onclick="openOverlay('geo-overlay')">
-                        <span><i class="fas fa-tv"></i> TV / Anime</span>
+                    <button class="action-btn mag-btn hover-trigger" onclick="openOverlay('geo-overlay')">
+                        <span style="font-weight:600;"><i class="fas fa-tv" style="margin-right:10px; opacity:0.6;"></i> TV / Anime</span>
                         <span>→</span>
                     </button>
-                    <button class="action-btn hover-trigger" onclick="openOverlay('ai-overlay')">
-                        <span><i class="fas fa-gamepad"></i> Games</span>
+                
+                    <button class="action-btn mag-btn hover-trigger" onclick="openOverlay('ai-overlay')">
+                        <span style="font-weight:600;"><i class="fas fa-gamepad" style="margin-right:10px; opacity:0.6;"></i> Games</span>
                         <span>→</span>
                     </button>
-                    <button class="action-btn hover-trigger" onclick="openOverlay('debate-overlay')">
-                        <span><i class="fas fa-layer-group"></i> Hobbies</span>
+                
+                    <button class="action-btn mag-btn hover-trigger" onclick="openOverlay('debate-overlay')">
+                        <span style="font-weight:600;"><i class="fas fa-layer-group" style="margin-right:10px; opacity:0.6;"></i> Hobbies</span>
                         <span>→</span>
                     </button>
+                </div>
+                <button class="scroll-down hover-trigger" onclick="document.getElementById('sec4').scrollIntoView();">↓</button>
+            </div>
+        </div>
+
+        <div class="section" id="sec4">
+            <div class="flashcard">
+                <h1 class="hover-text" data-text="Reputation">Reputation</h1>
+                <div class="btn-group">
+                    <div class="review-card mag-btn hover-trigger" onclick="window.open('https://yudafa.github.io', '_blank')">
+                        <span class="review-text">"Uhm, amazing person."</span>
+                        <span class="review-author">via yudafa.github.io ↗</span>
+                    </div>
+                    <div class="review-card mag-btn hover-trigger" onclick="window.open('https://todouro.github.io/', '_blank')">
+                        <span class="review-text">"Very inspiring patriotic teen."</span>
+                        <span class="review-author">via todouro.github.io ↗</span>
+                    </div>
+                </div>
+                <button class="scroll-down hover-trigger" onclick="document.getElementById('sec5').scrollIntoView();">↓</button>
+            </div>
+        </div>
+
+        <div class="section" id="sec5">
+            <div class="flashcard">
+                <h1 class="hover-text" data-text="Contact">Contact</h1>
+                <div class="btn-group">
+                    <a href="#" class="action-btn mag-btn hover-trigger">
+                        <span style="font-weight:600;"><i class="fab fa-discord" style="margin-right:10px;"></i> Discord</span>
+                        <span style="opacity:0.5; font-size:0.8rem;">@mohammad</span>
+                    </a>
+                    <a href="#" class="action-btn mag-btn hover-trigger">
+                        <span style="font-weight:600;"><i class="fab fa-instagram" style="margin-right:10px;"></i> Instagram</span>
+                        <span style="opacity:0.5; font-size:0.8rem;">@mohammad.bh</span>
+                    </a>
+                </div>
+                <button class="scroll-down hover-trigger" style="font-size:1rem; opacity:0.5;" onclick="document.getElementById('sec1').scrollIntoView();">↑ Return</button>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="geo-overlay" class="overlay">
+        <div class="overlay-content">
+            <div class="overlay-header">
+                <h2 class="overlay-title">TV / Anime</h2>
+                <button class="close-btn" onclick="closeAll()">Close</button>
+            </div>
+            <div class="grid-cards">
+                <div class="info-card mag-btn hover-trigger" style="cursor:pointer;" onclick="revealList(this)">
+                    <div class="card-title">Favorite Series</div>
+                    <span class="card-desc click-hint">Click to see ranking →</span>
+                    <div class="hidden-list" style="display:none;">
+                        1- Blue Box<br>2- Demon Slayer<br>3- Attack on Titan<br>4- Sakamoto Days<br>5- Horimiya
+                    </div>
+                </div>
+                <div class="info-card mag-btn hover-trigger" style="cursor:pointer;" onclick="revealList(this)">
+                    <div class="card-title">Manga</div>
+                    <span class="card-desc click-hint">Click to see top 3 →</span>
+                    <div class="hidden-list" style="display:none;">
+                        1- Blue Box<br>2- Spy X Family<br>3- Kaoru Hana
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <div id="debate-overlay" class="overlay">
+    
+    <div id="ai-overlay" class="overlay">
         <div class="overlay-content">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:40px;">
-                <h2 style="font-size:3rem; margin:0;">Hobbies</h2>
-                <button class="action-btn" style="padding:10px 20px;" onclick="closeAll()">Close</button>
+            <div class="overlay-header">
+                <h2 class="overlay-title">Games</h2>
+                <button class="close-btn" onclick="closeAll()">Close</button>
             </div>
             <div class="grid-cards">
-                <div class="info-card"><div class="card-title">Blender</div></div>
-                <div class="info-card"><div class="card-title">Badminton</div></div>
-                <div class="info-card"><div class="card-title">Football</div></div>
-                <div class="info-card"><div class="card-title">Pinterest</div></div>
-                <div class="info-card"><div class="card-title">Reddit</div></div>
-                <div class="info-card"><div class="card-title">Anime</div></div>
+                <div class="info-card"><div class="card-title">FC 26</div><div class="card-desc"></div></div>
+                <div class="info-card"><div class="card-title">Among Us</div><div class="card-desc"></div></div>
+                <div class="info-card"><div class="card-title">Minecraft</div><div class="card-desc"></div></div>
+                <div class="info-card"><div class="card-title">Roblox</div><div class="card-desc"></div></div>
+                <div class="info-card"><div class="card-title">Teardown</div><div class="card-desc"></div></div>
+                <div class="info-card"><div class="card-title">Assetto Corsa</div><div class="card-desc"></div></div>
+                <div class="info-card"><div class="card-title">BeamNG</div><div class="card-desc"></div></div>
+                <div class="info-card"><div class="card-title">Marvel Rivals</div><div class="card-desc"></div></div>
+                <div class="info-card"><div class="card-title">Blue Protocol</div><div class="card-desc"></div></div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="debate-overlay" class="overlay">
+        <div class="overlay-content">
+            <div class="overlay-header">
+                <h2 class="overlay-title">Hobbies</h2>
+                <button class="close-btn" onclick="closeAll()">Close</button>
+            </div>
+            <div class="grid-cards">
+                <div class="info-card"><div class="card-title">Blender</div><div class="card-desc">Creating 3D models and experimenting with renders.</div></div>
+                <div class="info-card"><div class="card-title">Badminton</div><div class="card-desc">Improving my game and staying active on the court.</div></div>
+                <div class="info-card"><div class="card-title">Football</div><div class="card-desc">Playing the beautiful game and following my favorite clubs.</div></div>
+                <div class="info-card"><div class="card-title">Pinterest</div><div class="card-desc">Curating visual boards and finding design inspiration.</div></div>
+                <div class="info-card"><div class="card-title">Reddit</div><div class="card-desc">Exploring niche communities and staying updated.</div></div>
+                <div class="info-card"><div class="card-title">Anime</div><div class="card-desc">A deep dive into Japanese storytelling and animation.</div></div>
             </div>
         </div>
     </div>
 
     <script>
-        // Cursor Logic
+        // --- 1. QUANTUM CURSOR ---
         const cursor = document.getElementById('cursor');
         const cursorDot = document.getElementById('cursor-dot');
         let mouseX = 0, mouseY = 0;
+        let cursorX = 0, cursorY = 0;
+
         document.addEventListener('mousemove', e => {
             mouseX = e.clientX; mouseY = e.clientY;
             cursorDot.style.left = mouseX + 'px'; cursorDot.style.top = mouseY + 'px';
-            cursor.style.left = mouseX + 'px'; cursor.style.top = mouseY + 'px';
         });
 
-        // OVERLAY FUNCTIONS - Fixed Logic
-        function openOverlay(id) {
-            const target = document.getElementById(id);
-            if(target) {
-                target.style.display = 'block';
-                document.querySelector('.main-scroller').style.overflowY = 'hidden';
+        function animateCursor() {
+            cursorX += (mouseX - cursorX) * 0.15; cursorY += (mouseY - cursorY) * 0.15;
+            cursor.style.left = cursorX + 'px'; cursor.style.top = cursorY + 'px';
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        document.querySelectorAll('.hover-trigger, .hover-text').forEach(el => {
+            el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+            el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+        });
+
+        // --- 2. TEXT DECRYPTION ---
+        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        document.querySelectorAll('.hover-text').forEach(el => {
+            el.addEventListener('mouseover', event => {
+                let iterations = 0;
+                const originalText = event.target.dataset.text;
+                const interval = setInterval(() => {
+                    event.target.innerText = originalText.split("").map((letter, index) => {
+                        if(index < iterations) return originalText[index];
+                        return letters[Math.floor(Math.random() * 26)];
+                    }).join("");
+                    if(iterations >= originalText.length) clearInterval(interval);
+                    iterations += 1 / 3;
+                }, 30);
+            });
+        });
+
+        // --- 3. CLICK EXPLOSION ---
+        document.addEventListener('click', e => {
+            for(let i=0; i<10; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                document.body.appendChild(particle);
+                const x = e.clientX; const y = e.clientY;
+                particle.style.left = x + 'px'; particle.style.top = y + 'px';
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = Math.random() * 50 + 20;
+                particle.style.setProperty('--dx', Math.cos(angle) * velocity + 'px');
+                particle.style.setProperty('--dy', Math.sin(angle) * velocity + 'px');
+                setTimeout(() => particle.remove(), 600);
+            }
+        });
+
+        // --- 4. HYPERDRIVE STARFIELD ---
+        const canvas = document.getElementById('starfield');
+        const ctx = canvas.getContext('2d');
+        let width, height, stars = [];
+        let isWarping = false;
+
+        function initStars() {
+            width = window.innerWidth; height = window.innerHeight;
+            canvas.width = width; canvas.height = height;
+            stars = [];
+            for(let i=0; i<400; i++) {
+                stars.push({ x: Math.random() * width, y: Math.random() * height, z: Math.random() * 2 + 0.5, o: Math.random() });
             }
         }
 
-        function closeAll() {
-            document.querySelectorAll('.overlay').forEach(o => o.style.display = 'none');
-            document.querySelector('.main-scroller').style.overflowY = 'scroll';
+        function animateStars() {
+            ctx.clearRect(0,0,width,height);
+            ctx.fillStyle = "white";
+            const speedMult = isWarping ? 30 : 1;
+            stars.forEach(star => {
+                star.y -= (0.2 * star.z) * speedMult;
+                if(star.y < 0) { star.y = height; star.x = Math.random() * width; }
+                ctx.beginPath();
+                if(isWarping) {
+                    ctx.strokeStyle = `rgba(255,255,255,${star.o})`; ctx.lineWidth = star.z;
+                    ctx.moveTo(star.x, star.y); ctx.lineTo(star.x, star.y + 40 * star.z); ctx.stroke();
+                } else {
+                    let offsetX = (mouseX - width/2) * 0.0002 * star.z;
+                    star.o += (Math.random() - 0.5) * 0.05;
+                    if(star.o < 0.2) star.o = 0.2; if(star.o > 1) star.o = 1;
+                    ctx.globalAlpha = star.o; ctx.arc(star.x - offsetX, star.y, star.z * 0.8, 0, Math.PI*2); ctx.fill();
+                    let dx = mouseX - (star.x - offsetX); let dy = mouseY - star.y;
+                    let dist = Math.sqrt(dx*dx + dy*dy);
+                    if(dist < 120) {
+                        ctx.strokeStyle = `rgba(255,255,255,${1 - dist/120})`; ctx.lineWidth = 0.5;
+                        ctx.beginPath(); ctx.moveTo(star.x - offsetX, star.y); ctx.lineTo(mouseX, mouseY); ctx.stroke();
+                    }
+                }
+            });
+            requestAnimationFrame(animateStars);
         }
 
-        // Intersection Observer for animations
+        function toggleWarp() {
+            isWarping = !isWarping;
+            const btn = document.querySelector('.warp-toggle');
+            btn.innerText = isWarping ? "DISENGAGE" : "HYPERDRIVE";
+            btn.style.background = isWarping ? "white" : "rgba(255,255,255,0.05)";
+            btn.style.color = isWarping ? "black" : "white";
+        }
+
+        window.addEventListener('resize', initStars);
+        initStars(); animateStars();
+
+        // --- 5. FLOATING DATA RAIN ---
+        const rainContainer = document.getElementById('data-rain');
+        function createRain() {
+            const el = document.createElement('div');
+            el.className = 'data-fragment';
+            el.style.left = Math.random() * 100 + '%';
+            el.style.animationDuration = (Math.random() * 10 + 10) + 's';
+            el.innerText = Math.random() > 0.5 ? '0x' + Math.floor(Math.random()*16777215).toString(16) : Math.random().toString(2).substr(2, 8);
+            rainContainer.appendChild(el);
+            setTimeout(() => el.remove(), 20000);
+        }
+        setInterval(createRain, 800);
+
+        // --- 6. TYPEWRITER ---
+        const text = "About me";
+        const typeTarget = document.getElementById('type-target');
+        let typeIdx = 0;
+        function typeWriter() {
+            if (typeIdx < text.length) {
+                typeTarget.innerHTML += text.charAt(typeIdx);
+                typeIdx++;
+                setTimeout(typeWriter, 50 + Math.random() * 50);
+            }
+        }
+        setTimeout(typeWriter, 1000);
+
+        // --- 7. SCROLL GLITCH ---
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                if (entry.isIntersecting) entry.target.classList.add('active');
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    const card = entry.target.querySelector('.flashcard');
+                    if(card) {
+                        card.classList.remove('glitch-in');
+                        void card.offsetWidth;
+                        card.classList.add('glitch-in');
+                    }
+                }
             });
-        }, { threshold: 0.5 });
+        }, { threshold: 0.4 });
         document.querySelectorAll('.section').forEach(sec => observer.observe(sec));
+
+        // --- UTILS ---
+        function openOverlay(id) { document.getElementById(id).style.display = 'block'; document.body.style.overflow = 'hidden'; }
+        function closeAll() { document.querySelectorAll('.overlay').forEach(o => o.style.display = 'none'); document.body.style.overflow = 'auto'; }
+        
+        // Reveal Rankings Toggle
+        function revealList(card) {
+            const list = card.querySelector('.hidden-list');
+            const hint = card.querySelector('.click-hint');
+            if (list.style.display === 'none') {
+                list.style.display = 'block';
+                hint.style.display = 'none';
+            } else {
+                list.style.display = 'none';
+                hint.style.display = 'block';
+            }
+        }
     </script>
 </body>
 </html>
