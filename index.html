@@ -432,4 +432,140 @@
                 const interval = setInterval(() => {
                     event.target.innerText = originalText.split("").map((letter, index) => {
                         if(index < iterations) return originalText[index];
-                        return letters[Math.floor(Math.
+                        return letters[Math.floor(Math.random() * 26)];
+                    }).join("");
+                    if(iterations >= originalText.length) clearInterval(interval);
+                    iterations += 1 / 3;
+                }, 30);
+            });
+        });
+
+        // --- 3. CLICK EXPLOSION ---
+        document.addEventListener('click', e => {
+            for(let i=0; i<10; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                document.body.appendChild(particle);
+                const x = e.clientX; const y = e.clientY;
+                particle.style.left = x + 'px'; particle.style.top = y + 'px';
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = Math.random() * 50 + 20;
+                particle.style.setProperty('--dx', Math.cos(angle) * velocity + 'px');
+                particle.style.setProperty('--dy', Math.sin(angle) * velocity + 'px');
+                setTimeout(() => particle.remove(), 600);
+            }
+        });
+
+        // --- 4. HYPERDRIVE STARFIELD ---
+        const canvas = document.getElementById('starfield');
+        const ctx = canvas.getContext('2d');
+        let width, height, stars = [];
+        let isWarping = false;
+
+        function initStars() {
+            width = window.innerWidth; height = window.innerHeight;
+            canvas.width = width; canvas.height = height;
+            stars = [];
+            for(let i=0; i<400; i++) {
+                stars.push({ x: Math.random() * width, y: Math.random() * height, z: Math.random() * 2 + 0.5, o: Math.random() });
+            }
+        }
+
+        function animateStars() {
+            ctx.clearRect(0,0,width,height);
+            ctx.fillStyle = "white";
+            const speedMult = isWarping ? 30 : 1;
+            stars.forEach(star => {
+                star.y -= (0.2 * star.z) * speedMult;
+                if(star.y < 0) { star.y = height; star.x = Math.random() * width; }
+                ctx.beginPath();
+                if(isWarping) {
+                    ctx.strokeStyle = `rgba(255,255,255,${star.o})`; ctx.lineWidth = star.z;
+                    ctx.moveTo(star.x, star.y); ctx.lineTo(star.x, star.y + 40 * star.z); ctx.stroke();
+                } else {
+                    let offsetX = (mouseX - width/2) * 0.0002 * star.z;
+                    star.o += (Math.random() - 0.5) * 0.05;
+                    if(star.o < 0.2) star.o = 0.2; if(star.o > 1) star.o = 1;
+                    ctx.globalAlpha = star.o; ctx.arc(star.x - offsetX, star.y, star.z * 0.8, 0, Math.PI*2); ctx.fill();
+                    let dx = mouseX - (star.x - offsetX); let dy = mouseY - star.y;
+                    let dist = Math.sqrt(dx*dx + dy*dy);
+                    if(dist < 120) {
+                        ctx.strokeStyle = `rgba(255,255,255,${1 - dist/120})`; ctx.lineWidth = 0.5;
+                        ctx.beginPath(); ctx.moveTo(star.x - offsetX, star.y); ctx.lineTo(mouseX, mouseY); ctx.stroke();
+                    }
+                }
+            });
+            requestAnimationFrame(animateStars);
+        }
+
+        function toggleWarp() {
+            isWarping = !isWarping;
+            const btn = document.querySelector('.warp-toggle');
+            btn.innerText = isWarping ? "DISENGAGE" : "HYPERDRIVE";
+            btn.style.background = isWarping ? "white" : "rgba(255,255,255,0.05)";
+            btn.style.color = isWarping ? "black" : "white";
+        }
+
+        window.addEventListener('resize', initStars);
+        initStars(); animateStars();
+
+        // --- 5. FLOATING DATA RAIN ---
+        const rainContainer = document.getElementById('data-rain');
+        function createRain() {
+            const el = document.createElement('div');
+            el.className = 'data-fragment';
+            el.style.left = Math.random() * 100 + '%';
+            el.style.animationDuration = (Math.random() * 10 + 10) + 's';
+            el.innerText = Math.random() > 0.5 ? '0x' + Math.floor(Math.random()*16777215).toString(16) : Math.random().toString(2).substr(2, 8);
+            rainContainer.appendChild(el);
+            setTimeout(() => el.remove(), 20000);
+        }
+        setInterval(createRain, 800);
+
+        // --- 6. TYPEWRITER ---
+        const typeText = "About me";
+        const typeTarget = document.getElementById('type-target');
+        let typeIdx = 0;
+        function typeWriter() {
+            if (typeIdx < typeText.length) {
+                typeTarget.innerHTML += typeText.charAt(typeIdx);
+                typeIdx++;
+                setTimeout(typeWriter, 50 + Math.random() * 50);
+            }
+        }
+        setTimeout(typeWriter, 1000);
+
+        // --- 7. SCROLL GLITCH ---
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    const card = entry.target.querySelector('.flashcard');
+                    if(card) {
+                        card.classList.remove('glitch-in');
+                        void card.offsetWidth;
+                        card.classList.add('glitch-in');
+                    }
+                }
+            });
+        }, { threshold: 0.4 });
+        document.querySelectorAll('.section').forEach(sec => observer.observe(sec));
+
+        // --- UTILS ---
+        function openOverlay(id) { document.getElementById(id).style.display = 'block'; document.body.style.overflow = 'hidden'; }
+        function closeAll() { document.querySelectorAll('.overlay').forEach(o => o.style.display = 'none'); document.body.style.overflow = 'auto'; }
+        
+        function revealList(card) {
+            const list = card.querySelector('.hidden-list');
+            const hint = card.querySelector('.click-hint');
+            if (list.style.display === 'none') {
+                list.style.display = 'block';
+                hint.style.display = 'none';
+            } else {
+                list.style.display = 'none';
+                hint.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>
