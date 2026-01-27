@@ -187,6 +187,10 @@
         .card-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 10px; }
         .card-desc { font-size: 0.95rem; opacity: 0.6; line-height: 1.6; }
 
+        /* --- RANKING LISTS --- */
+        .hidden-list { margin-top: 15px; font-family: 'JetBrains Mono'; font-size: 0.9rem; line-height: 1.8; color: #fff; }
+        .click-hint { color: #a5b4fc !important; font-weight: bold; margin-top: 10px; display: block; }
+
         .particle {
             position: absolute; width: 4px; height: 4px; background: white; border-radius: 50%;
             pointer-events: none; animation: pop 0.6s ease-out forwards;
@@ -295,11 +299,67 @@
 
     </div>
 
-    <div id="geo-overlay" class="overlay"><div class="overlay-content"><div class="overlay-header"><h2 class="overlay-title">TV / Anime</h2><button class="close-btn" onclick="closeAll()">Close</button></div><div class="grid-cards"><div class="info-card"><div class="card-title">Favorite Series</div><div class="card-desc">Analyzing plots, animation styles, and character development in my favorite shows.</div></div><div class="info-card"><div class="card-title">Manga</div><div class="card-desc">Exploring diverse genres from Shonen to Seinen.</div></div></div></div></div>
+    <div id="geo-overlay" class="overlay">
+        <div class="overlay-content">
+            <div class="overlay-header">
+                <h2 class="overlay-title">TV / Anime</h2>
+                <button class="close-btn" onclick="closeAll()">Close</button>
+            </div>
+            <div class="grid-cards">
+                <div class="info-card mag-btn hover-trigger" style="cursor:pointer;" onclick="revealList(this)">
+                    <div class="card-title">Favorite Series</div>
+                    <span class="card-desc click-hint">Click to see ranking →</span>
+                    <div class="hidden-list" style="display:none;">
+                        1- Blue Box<br>2- Demon Slayer<br>3- Attack on Titan<br>4- Sakamoto Days<br>5- Horimiya
+                    </div>
+                </div>
+                <div class="info-card mag-btn hover-trigger" style="cursor:pointer;" onclick="revealList(this)">
+                    <div class="card-title">Manga</div>
+                    <span class="card-desc click-hint">Click to see top 3 →</span>
+                    <div class="hidden-list" style="display:none;">
+                        1- Blue Box<br>2- Spy X Family<br>3- Kaoru Hana
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     
-    <div id="ai-overlay" class="overlay"><div class="overlay-content"><div class="overlay-header"><h2 class="overlay-title">Gaming</h2><button class="close-btn" onclick="closeAll()">Close</button></div><div class="grid-cards"><div class="info-card"><div class="card-title">Competitive</div><div class="card-desc">Strategy and skill-based gaming.</div></div><div class="info-card"><div class="card-title">Technical</div><div class="card-desc">Interested in game mechanics and engine architecture.</div></div></div></div></div>
+    <div id="ai-overlay" class="overlay">
+        <div class="overlay-content">
+            <div class="overlay-header">
+                <h2 class="overlay-title">Gaming</h2>
+                <button class="close-btn" onclick="closeAll()">Close</button>
+            </div>
+            <div class="grid-cards">
+                <div class="info-card"><div class="card-title">FC 26</div><div class="card-desc">Mastering the pitch and building the ultimate squad.</div></div>
+                <div class="info-card"><div class="card-title">Among Us</div><div class="card-desc">Finding the imposter in a game of survival and betrayal.</div></div>
+                <div class="info-card"><div class="card-title">Minecraft</div><div class="card-desc">Exploring infinite worlds and building anything imaginable.</div></div>
+                <div class="info-card"><div class="card-title">Roblox</div><div class="card-desc">Diving into a massive universe of user-created games.</div></div>
+                <div class="info-card"><div class="card-title">Teardown</div><div class="card-desc">The ultimate sandbox for creative destruction and heists.</div></div>
+                <div class="info-card"><div class="card-title">Assetto Corsa</div><div class="card-desc">Realistic racing simulation for the purist driver.</div></div>
+                <div class="info-card"><div class="card-title">BeamNG</div><div class="card-desc">Unmatched soft-body vehicle physics and crash simulation.</div></div>
+                <div class="info-card"><div class="card-title">Marvel Rivals</div><div class="card-desc">Fast-paced hero shooter action with Marvel icons.</div></div>
+                <div class="info-card"><div class="card-title">Blue Protocol</div><div class="card-desc">Embarking on a cinematic journey in this anime-style RPG.</div></div>
+            </div>
+        </div>
+    </div>
     
-    <div id="debate-overlay" class="overlay"><div class="overlay-content"><div class="overlay-header"><h2 class="overlay-title">Hobbies</h2><button class="close-btn" onclick="closeAll()">Close</button></div><div class="grid-cards"><div class="info-card"><div class="card-title">Blender</div><div class="card-desc">3D Modeling and exploring creative digital workflows.</div></div><div class="info-card"><div class="card-title">Design</div><div class="card-desc">Graphic design and UI/UX experimentation.</div></div></div></div></div>
+    <div id="debate-overlay" class="overlay">
+        <div class="overlay-content">
+            <div class="overlay-header">
+                <h2 class="overlay-title">Hobbies</h2>
+                <button class="close-btn" onclick="closeAll()">Close</button>
+            </div>
+            <div class="grid-cards">
+                <div class="info-card"><div class="card-title">Blender</div><div class="card-desc">Creating 3D models and experimenting with renders.</div></div>
+                <div class="info-card"><div class="card-title">Badminton</div><div class="card-desc">Improving my game and staying active on the court.</div></div>
+                <div class="info-card"><div class="card-title">Football</div><div class="card-desc">Playing the beautiful game and following my favorite clubs.</div></div>
+                <div class="info-card"><div class="card-title">Pinterest</div><div class="card-desc">Curating visual boards and finding design inspiration.</div></div>
+                <div class="info-card"><div class="card-title">Reddit</div><div class="card-desc">Exploring niche communities and staying updated.</div></div>
+                <div class="info-card"><div class="card-title">Anime</div><div class="card-desc">A deep dive into Japanese storytelling and animation.</div></div>
+            </div>
+        </div>
+    </div>
 
     <script>
         // --- 1. QUANTUM CURSOR ---
@@ -456,6 +516,19 @@
         // --- UTILS ---
         function openOverlay(id) { document.getElementById(id).style.display = 'block'; document.body.style.overflow = 'hidden'; }
         function closeAll() { document.querySelectorAll('.overlay').forEach(o => o.style.display = 'none'); document.body.style.overflow = 'auto'; }
+        
+        // Reveal Rankings Toggle
+        function revealList(card) {
+            const list = card.querySelector('.hidden-list');
+            const hint = card.querySelector('.click-hint');
+            if (list.style.display === 'none') {
+                list.style.display = 'block';
+                hint.style.display = 'none';
+            } else {
+                list.style.display = 'none';
+                hint.style.display = 'block';
+            }
+        }
     </script>
 </body>
 </html>
