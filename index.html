@@ -22,7 +22,6 @@
         body {
             margin: 0; background-color: var(--bg-deep); color: white;
             font-family: 'Inter', sans-serif; height: 100vh; overflow: hidden;
-            transition: background-color 0.2s ease; /* Added for the music pulse */
         }
 
         /* --- CUSTOM CURSOR --- */
@@ -290,7 +289,7 @@
                         <span style="opacity:0.5; font-size:0.8rem;">@yudafao</span>
                     </a>
                     <a href="#" class="action-btn mag-btn hover-trigger">
-                        <span style="font-weight:600;"><i class="fa-brands fa-tiktok" style="margin-right:10px;"></i> TikTok</span>
+                        <span style="font-weight:600;"><i class="fab-brands fa-tiktok" style="margin-right:10px;"></i> TikTok</span>
                         <span style="opacity:0.5; font-size:0.8rem;">@mohd.dhom25</span>
                     </a>
                 </div>
@@ -363,43 +362,6 @@
     </div>
 
     <script>
-        // --- MUSIC SYNTH ENGINE ---
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-        function playSynthNote(freq) {
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            
-            osc.type = 'triangle'; // Smooth synth sound
-            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-            
-            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1.2);
-            
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            
-            osc.start();
-            osc.stop(audioCtx.currentTime + 1.2);
-
-            // Visual feedback: Flash background
-            document.body.style.backgroundColor = "rgba(255,255,255,0.08)";
-            setTimeout(() => {
-                document.body.style.backgroundColor = "var(--bg-deep)";
-            }, 100);
-        }
-
-        window.addEventListener('keydown', (e) => {
-            switch(e.key) {
-                case "ArrowUp":    playSynthNote(440); break; // A4
-                case "ArrowDown":  playSynthNote(349.23); break; // F4
-                case "ArrowLeft":  playSynthNote(329.63); break; // E4
-                case "ArrowRight": playSynthNote(392); break; // G4
-            }
-        });
-
         // --- 1. QUANTUM CURSOR ---
         const cursor = document.getElementById('cursor');
         const cursorDot = document.getElementById('cursor-dot');
@@ -523,12 +485,12 @@
         setInterval(createRain, 800);
 
         // --- 6. TYPEWRITER ---
-        const typeText = "About me";
+        const text = "About me";
         const typeTarget = document.getElementById('type-target');
         let typeIdx = 0;
         function typeWriter() {
-            if (typeIdx < typeText.length) {
-                typeTarget.innerHTML += typeText.charAt(typeIdx);
+            if (typeIdx < text.length) {
+                typeTarget.innerHTML += text.charAt(typeIdx);
                 typeIdx++;
                 setTimeout(typeWriter, 50 + Math.random() * 50);
             }
@@ -555,6 +517,7 @@
         function openOverlay(id) { document.getElementById(id).style.display = 'block'; document.body.style.overflow = 'hidden'; }
         function closeAll() { document.querySelectorAll('.overlay').forEach(o => o.style.display = 'none'); document.body.style.overflow = 'auto'; }
         
+        // Reveal Rankings Toggle
         function revealList(card) {
             const list = card.querySelector('.hidden-list');
             const hint = card.querySelector('.click-hint');
@@ -569,3 +532,4 @@
     </script>
 </body>
 </html>
+
