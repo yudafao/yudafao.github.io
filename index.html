@@ -11,7 +11,7 @@
             --bg-deep: #020203;
             --accent: #73D6FF;
             --glass: rgba(255, 255, 255, 0.02);
-            --glass-border: rgba(255, 255, 255, 0.06);
+            --glass-border: rgba(115, 214, 255, 0.12);
             --neon-blue: rgba(115, 214, 255, 0.6);
             --danger: #ff003c;
             --ease: cubic-bezier(0.23, 1, 0.32, 1);
@@ -27,30 +27,31 @@
         /* --- CUSTOM CURSOR --- */
         #cursor {
             position: fixed; top: 0; left: 0; width: 20px; height: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.8); border-radius: 50%;
+            border: 1px solid var(--accent); border-radius: 50%;
             transform: translate(-50%, -50%); pointer-events: none; z-index: 9999;
             transition: width 0.2s, height 0.2s, background 0.2s;
             mix-blend-mode: difference;
         }
         #cursor-dot {
             position: fixed; top: 0; left: 0; width: 4px; height: 4px;
-            background: white; border-radius: 50%;
+            background: var(--accent); border-radius: 50%;
             transform: translate(-50%, -50%); pointer-events: none; z-index: 10000;
         }
-        body.hovering #cursor { width: 50px; height: 50px; background: rgba(255, 255, 255, 0.1); border-color: transparent; backdrop-filter: invert(1); }
+        body.hovering #cursor { width: 50px; height: 50px; background: rgba(115, 214, 255, 0.15); border-color: transparent; backdrop-filter: invert(1); }
 
         /* --- BACKGROUND LAYERS --- */
         #nebula {
             position: fixed; inset: 0; z-index: 0; pointer-events: none;
             background: 
-                radial-gradient(circle at 10% 20%, rgba(115, 214, 255, 0.10), transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(115, 214, 255, 0.06), transparent 40%);
+                radial-gradient(circle at 10% 20%, rgba(115, 214, 255, 0.08), transparent 45%),
+                radial-gradient(circle at 90% 80%, rgba(56, 189, 248, 0.05), transparent 40%);
             filter: blur(80px); animation: nebula-pulse 15s infinite alternate ease-in-out;
         }
         @keyframes nebula-pulse { 0% { opacity: 0.5; transform: scale(1); } 100% { opacity: 1; transform: scale(1.1); } }
+
         .data-fragment {
             position: fixed; font-family: 'JetBrains Mono'; font-size: 10px; 
-            color: rgba(255,255,255,0.15); user-select: none; pointer-events: none; z-index: 0;
+            color: rgba(115, 214, 255, 0.2); user-select: none; pointer-events: none; z-index: 0;
             animation: float-up linear infinite;
         }
         @keyframes float-up { from { transform: translateY(100vh); opacity: 0; } 50% { opacity: 0.5; } to { transform: translateY(-10vh); opacity: 0; } }
@@ -64,21 +65,13 @@
         nav {
             position: fixed; top: 0; left: 0; width: 100%; padding: 40px 60px;
             display: flex; justify-content: space-between; align-items: center;
-            z-index: 100; pointer-events: auto;
+            z-index: 100; pointer-events: auto; box-sizing: border-box;
         }
         .nav-item { 
             font-family: 'JetBrains Mono'; font-size: 12px; text-transform: uppercase; 
-            letter-spacing: 2px; opacity: 0.8; text-shadow: 0 0 10px rgba(255,255,255,0.2);
+            letter-spacing: 2px; opacity: 0.8; text-shadow: 0 0 10px rgba(115, 214, 255, 0.3);
             cursor: pointer;
         }
-        
-        .warp-toggle {
-            background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);
-            color: white; padding: 8px 16px; border-radius: 20px; cursor: pointer;
-            font-family: 'JetBrains Mono'; font-size: 10px; text-transform: uppercase;
-            transition: 0.3s;
-        }
-        .warp-toggle:hover { background: var(--accent); color: black; box-shadow: 0 0 20px rgba(115,214,255,0.7); }
 
         /* --- SCROLLER --- */
         .main-scroller {
@@ -105,7 +98,7 @@
 
         .flashcard::after {
             content: ""; position: absolute; inset: 0; border-radius: 12px; padding: 1px;
-            background: linear-gradient(45deg, transparent 40%, rgba(115,214,255,0.55), transparent 60%);
+            background: linear-gradient(45deg, transparent 40%, rgba(115, 214, 255, 0.5), transparent 60%);
             -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
             -webkit-mask-composite: xor; mask-composite: exclude;
             pointer-events: none; animation: border-flow 4s linear infinite;
@@ -123,7 +116,7 @@
 
         h1 {
             font-size: 5rem; margin: 0; font-weight: 900; letter-spacing: -3px;
-            background: linear-gradient(to bottom, #73D6FF, #ffffff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background: linear-gradient(to bottom, #fff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             transform: translateZ(30px); cursor: pointer;
         }
         
@@ -131,7 +124,7 @@
             font-family: 'JetBrains Mono'; font-size: 1.1rem; color: rgba(255,255,255,0.7);
             margin-top: 20px; min-height: 1.6em; transform: translateZ(20px);
         }
-        .cursor-blink { display: inline-block; width: 8px; height: 1.2em; background: white; animation: blink-cursor 1s infinite; vertical-align: middle; }
+        .cursor-blink { display: inline-block; width: 8px; height: 1.2em; background: var(--accent); animation: blink-cursor 1s infinite; vertical-align: middle; }
         @keyframes blink-cursor { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
         /* --- BUTTONS --- */
@@ -141,15 +134,19 @@
             background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border);
             padding: 22px 30px; color: white; cursor: pointer; text-align: left;
             display: flex; justify-content: space-between; align-items: center;
-            transition: background 0.3s, border-color 0.3s; border-radius: 6px; text-decoration: none;
+            transition: background 0.3s, border-color 0.3s, box-shadow 0.3s; border-radius: 6px; text-decoration: none;
         }
-        .action-btn:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2); }
+        .action-btn:hover { 
+            background: rgba(115, 214, 255, 0.05); 
+            border-color: var(--accent);
+            box-shadow: 0 0 15px rgba(115, 214, 255, 0.2);
+        }
         
         .scroll-down {
-            margin-top: 50px; background: none; border: none; color: rgba(255,255,255,0.2);
+            margin-top: 50px; background: none; border: none; color: rgba(115, 214, 255, 0.4);
             font-size: 1.5rem; cursor: pointer; transition: 0.3s; animation: bounce 2s infinite;
         }
-        .scroll-down:hover { color: white; text-shadow: 0 0 10px white; }
+        .scroll-down:hover { color: var(--accent); text-shadow: 0 0 10px var(--accent); }
         @keyframes bounce { 0%, 100% {transform: translateY(0);} 50% {transform: translateY(10px);} }
 
         /* --- REPUTATION --- */
@@ -157,9 +154,9 @@
             background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border);
             padding: 25px; border-radius: 8px; position: relative; transition: 0.3s; cursor: pointer;
         }
-        .review-card:hover { border-color: rgba(255,255,255,0.3); transform: scale(1.02); }
+        .review-card:hover { border-color: var(--accent); transform: scale(1.02); box-shadow: 0 0 15px rgba(115, 214, 255, 0.15); }
         .review-text { font-size: 1.1rem; font-style: italic; opacity: 0.9; display: block; margin-bottom: 8px; }
-        .review-author { font-family: 'JetBrains Mono'; font-size: 0.75rem; color: #73D6FF; text-decoration: none; opacity: 0.7; }
+        .review-author { font-family: 'JetBrains Mono'; font-size: 0.75rem; color: var(--accent); text-decoration: none; opacity: 0.8; }
         .review-author:hover { text-decoration: underline; opacity: 1; }
 
         /* --- OVERLAYS --- */
@@ -174,22 +171,22 @@
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
         .overlay-content { max-width: 1200px; margin: 80px auto; padding: 40px; }
         .overlay-header { display: flex; justify-content: space-between; border-bottom: 1px solid var(--glass-border); padding-bottom: 20px; margin-bottom: 40px; }
-        .overlay-title { font-size: 3rem; font-weight: 800; margin: 0; }
-        .close-btn { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: white; padding: 10px 24px; border-radius: 100px; cursor: pointer; transition: 0.3s; }
-        .close-btn:hover { background: white; color: black; }
+        .overlay-title { font-size: 3rem; font-weight: 800; margin: 0; color: var(--accent); }
+        .close-btn { background: transparent; border: 1px solid var(--glass-border); color: white; padding: 10px 24px; border-radius: 100px; cursor: pointer; transition: 0.3s; }
+        .close-btn:hover { background: var(--accent); color: black; box-shadow: 0 0 15px var(--accent); }
 
         .grid-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
         .info-card { background: rgba(255,255,255,0.03); padding: 35px; border-radius: 12px; border: 1px solid var(--glass-border); transition: 0.3s; }
-        .info-card:hover { border-color: white; transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .card-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 10px; }
+        .info-card:hover { border-color: var(--accent); transform: translateY(-5px); box-shadow: 0 10px 30px rgba(115, 214, 255, 0.1); }
+        .card-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 10px; color: var(--accent); }
         .card-desc { font-size: 0.95rem; opacity: 0.6; line-height: 1.6; }
 
         /* --- RANKING LISTS --- */
         .hidden-list { margin-top: 15px; font-family: 'JetBrains Mono'; font-size: 0.9rem; line-height: 1.8; color: #fff; }
-        .click-hint { color: #73D6FF !important; font-weight: bold; margin-top: 10px; display: block; }
+        .click-hint { color: var(--accent) !important; font-weight: bold; margin-top: 10px; display: block; }
 
         .particle {
-            position: absolute; width: 4px; height: 4px; background: white; border-radius: 50%;
+            position: absolute; width: 4px; height: 4px; background: var(--accent); border-radius: 50%;
             pointer-events: none; animation: pop 0.6s ease-out forwards;
         }
         @keyframes pop { to { transform: translate(var(--dx), var(--dy)); opacity: 0; } }
@@ -199,6 +196,7 @@
             h1 { font-size: 3rem; }
             #cursor, #cursor-dot { display: none; }
             * { cursor: auto; }
+            nav { padding: 25px 30px; }
         }
     </style>
 </head>
@@ -459,7 +457,6 @@
         function openOverlay(id) { document.getElementById(id).style.display = 'block'; document.body.style.overflow = 'hidden'; }
         function closeAll() { document.querySelectorAll('.overlay').forEach(o => o.style.display = 'none'); document.body.style.overflow = 'auto'; }
         
-        // Reveal Rankings Toggle
         function revealList(card) {
             const list = card.querySelector('.hidden-list');
             const hint = card.querySelector('.click-hint');
@@ -473,3 +470,4 @@
         }
     </script>
 </body>
+</html>
